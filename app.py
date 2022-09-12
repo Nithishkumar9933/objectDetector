@@ -17,3 +17,5 @@ MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
 PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
 PATH_TO_LABELS = os.path.join('data', 'mscoco_label_map.pbtxt')
 NUM_CLASSES = 90
+
+detection_graph = tf.Graph()
