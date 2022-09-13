@@ -35,3 +35,10 @@ def load_image_into_numpy_array(image):
   (im_width, im_height) = image.size
   return np.array(image.getdata()).reshape(
       (im_height, im_width, 3)).astype(np.uint8)
+
+#Routing and image uploading
+app = Flask(__name__) #Starting the flask application
+bootstrap = Bootstrap(app)
+
+app.config['UPLOAD_FOLDER'] = 'uploads/'
+app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg']) #Type of images allowed
