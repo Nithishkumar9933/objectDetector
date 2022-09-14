@@ -61,7 +61,38 @@ def upload():
                                 filename=filename))
         
 @app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    PATH_TO_TEST_IMAGES_DIR = app.config['UPLOAD_FOLDER']
+    TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR,filename.format(i)) for i in range(1, 2) ]
+    IMAGE_SIZE = (12, 8)
 
+    with detection_graph.as_default():
+        with tf.Session(graph=detection_graph) as sess:
+            for image_path in TEST_IMAGE_PATHS:
+                image = Image.open(image_path)
+                image_np = load_image_into_numpy_array(image)
+                image_np_expanded = np.expand_dims(image_np, axis=0)
+                image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+                boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+                scores = detection_graph.get_tensor_by_name('detection_scores:0')
+                classes = detection_graph.get_tensor_by_name('detection_classes:0')
+                num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+                (boxes, scores, classes, num_detections) = sess.run(
+                    [boxes, scores, classes, num_detections],
+                    feed_dict={image_tensor: image_np_expanded})
+                vis_util.visualize_boxes_and_labels_on_image_array(
+                    image_np,
+                    np.squeeze(boxes),
+                    np.squeeze(classes).astype(np.int32),
+                    np.squeeze(scores),
+                    category_index,
+                    use_normalized_coordinates=True,
+                    line_thickness=8)
+                im = Image.fromarray(image_np)
+                im.save('uploads/'+filename)
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
 
 
 
