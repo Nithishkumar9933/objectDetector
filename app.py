@@ -59,3 +59,5 @@ def upload():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect(url_for('uploaded_file',
                                 filename=filename))
+        
+@app.route('/uploads/<filename>')
