@@ -1,7 +1,8 @@
 import os  #For interacting with the operating system
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory #For rendering the template in templates folder
 from flask_bootstrap import Bootstrap #To import the bootstrap
-from werkzeug import secure_filename #For security purposes
+# from werkzeug import secure_filename #For security purposes
+from werkzeug.utils import secure_filename
 import numpy as np #For numerical calculations
 import os
 import six.moves.urllib as urllib
@@ -21,8 +22,8 @@ NUM_CLASSES = 90
 # For detection of objects from images
 detection_graph = tf.Graph()
 with detection_graph.as_default():
-  od_graph_def = tf.GraphDef()
-  with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+  od_graph_def = tf.compat.v1.GraphDef()
+  with tf.compat.v2.io.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
     serialized_graph = fid.read()
     od_graph_def.ParseFromString(serialized_graph)
     tf.import_graph_def(od_graph_def, name='')
@@ -68,7 +69,7 @@ def uploaded_file(filename):
     IMAGE_SIZE = (12, 8)
 
     with detection_graph.as_default():
-        with tf.Session(graph=detection_graph) as sess:
+        with tf.compat.v1.Session(graph=detection_graph) as sess:
             for image_path in TEST_IMAGE_PATHS:
                 image = Image.open(image_path)
                 image_np = load_image_into_numpy_array(image)
